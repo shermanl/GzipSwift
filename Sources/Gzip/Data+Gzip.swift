@@ -219,7 +219,11 @@ extension Data {
     /// - Returns: Gzip-decompressed `Data` object.
     /// - Throws: `GzipError`
     public func gunzipped() throws -> Data {
-        
+        var totalIn: UInt = 0
+        return try gunzipped(totalIn: &totalIn)
+    }
+
+    public func gunzipped(totalIn: inout UInt) throws -> Data {
         guard !self.isEmpty else {
             return Data()
         }
@@ -274,6 +278,8 @@ extension Data {
             
             throw GzipError(code: status, msg: stream.msg)
         }
+
+        totalIn = stream.total_in
         
         data.count = Int(stream.total_out)
         
